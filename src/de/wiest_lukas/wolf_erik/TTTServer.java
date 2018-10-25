@@ -41,9 +41,11 @@ public class TTTServer implements Runnable
                 {
                     try
                     {
+                        System.out.println("wait for player " + c + " to connect");
                         serverSocket = new ServerSocket(5050);
                         TTTClientConnection client = clients.get(c);
                         client.setClient(serverSocket.accept());
+                        System.out.println("player " + c+ " connected.");
                         
                     } catch (IOException ex)
                     {
@@ -87,8 +89,11 @@ public class TTTServer implements Runnable
         public void setClient(Socket client) throws IOException
         {
             this.client = client;
+            System.out.println("creating input stream for player " + figure);
             in = new ObjectInputStream(client.getInputStream());
+            System.out.println("creating output stream for player " + figure);
             out = new ObjectOutputStream(client.getOutputStream());
+            System.out.println("set client for player " + figure + " finished");
         }
     }
 }
