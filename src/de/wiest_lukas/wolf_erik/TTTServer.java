@@ -89,10 +89,13 @@ public class TTTServer implements Runnable
         public void setClient(Socket client) throws IOException
         {
             this.client = client;
-            System.out.println("creating input stream for player " + figure);
-            in = new ObjectInputStream(client.getInputStream());
             System.out.println("creating output stream for player " + figure);
             out = new ObjectOutputStream(client.getOutputStream());
+            System.out.println("set client for player " + figure + " finished");
+            out.flush();
+            System.out.println("flushed output stream to player " + figure);
+            System.out.println("creating input stream for player " + figure);
+            in = new ObjectInputStream(client.getInputStream());
             System.out.println("set client for player " + figure + " finished");
         }
     }

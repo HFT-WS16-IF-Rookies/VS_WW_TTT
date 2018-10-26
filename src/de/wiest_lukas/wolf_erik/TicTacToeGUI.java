@@ -128,8 +128,9 @@ class TTTGame implements Runnable
         {
             String[] address = serverURL.split(":");
             server = new Socket(address[0], Integer.valueOf(address[1]));
-            in = new ObjectInputStream(server.getInputStream());
             out = new ObjectOutputStream(server.getOutputStream());
+            out.flush();
+            in = new ObjectInputStream(server.getInputStream());
 
             TTTProtocol telegram = new TTTProtocol();
             telegram.message = "hi";
