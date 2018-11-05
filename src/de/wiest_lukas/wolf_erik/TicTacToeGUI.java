@@ -133,8 +133,22 @@ class TTTGame implements Runnable
             in = new ObjectInputStream(server.getInputStream());
 
             TTTProtocol telegram = new TTTProtocol();
-            telegram.message = "hi";
+            telegram.message = "hi from Client";
             out.writeObject(telegram);
+            out.flush();
+            out.writeObject(null);
+            out.flush();
+
+            try
+            {
+                Object obj;
+                while ((obj=in.readObject()) != null && obj instanceof TTTProtocol)
+                    System.out.println("[Client] - " + ((TTTProtocol) obj).message);
+            }
+            catch (IOException|ClassNotFoundException e)
+            {
+                e.printStackTrace();
+            }
 
             in.close();
             out.close();

@@ -36,22 +36,59 @@ public class TTTServer implements Runnable
         clients.put('O', new TTTClientConnection('O'));
         clients.put('X', new TTTClientConnection('X'));
 
+        try
+        {
+            serverSocket = new ServerSocket(5050);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            return;
+        }
+
         clients.keySet().stream()
                 .forEach(c ->
                 {
                     try
                     {
                         System.out.println("wait for player " + c + " to connect");
-                        serverSocket = new ServerSocket(5050);
                         TTTClientConnection client = clients.get(c);
                         client.setClient(serverSocket.accept());
                         System.out.println("player " + c+ " connected.");
-                        
+                        TTTProtocol msg = new TTTProtocol();
+                        msg.message = "Hello from Server";
+                        client.out.writeObject(msg);
+                        client.out.flush();
+                        client.out.writeObject(null);
+                        client.out.flush();
+
                     } catch (IOException ex)
                     {
                         ex.printStackTrace();
                     }
                 });
+
+        try
+        {
+            serverSocket.close();
+        } catch (IOException ex)
+        {
+            ex.printStackTrace();
+        }
+
+        clients.values().stream().forEach(c ->
+        {
+            try
+            {
+                Object obj;
+                while ((obj=c.in.readObject()) != null && obj instanceof TTTProtocol)
+                    System.out.println("[Server] - " + ((TTTProtocol) obj).message);
+            }
+            catch (IOException|ClassNotFoundException e)
+            {
+                e.printStackTrace();
+            }
+        });
 
         while(!Thread.interrupted())
         {
